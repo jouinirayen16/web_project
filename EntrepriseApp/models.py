@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.utils import timezone
 
-# Validator pour l'email
 def validate_gmail(value):
     if not value.endswith('@gmail.com'):
         raise ValidationError("Seuls les emails appartenant au domaine gmail.com sont acceptés")
@@ -38,7 +37,6 @@ class Utilisateur(AbstractUser):
         super().save(*args, **kwargs)
 
 
-# Regex pour le matricule fiscal tunisien
 matricule_regex = RegexValidator(
     regex=r'^\d{7}[/ -]?[A-Za-z][/ -]?[ABDNPEabdnpe][/ -]?[MPCNEmpcne][/ -]?\d{3}$',
     message="Format du matricule fiscal invalide."

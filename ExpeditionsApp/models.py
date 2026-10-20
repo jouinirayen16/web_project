@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-# Create your models here.
 class Expedition(models.Model):
     reference = models.CharField(max_length=20, unique=True, editable=False)
     ville_depart = models.CharField(max_length=100)

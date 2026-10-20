@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Offer
+from .models import Offre
 
-@admin.register(Offer)
-class OfferAdmin(admin.ModelAdmin):
-    # Bloc 1 : Personnalisation de base
+@admin.register(Offre)
+class OffreAdmin(admin.ModelAdmin):
     list_display = ('id', 'transporteur', 'expedition', 'prix', 'delai_jours', 'statut_badge', 'statut')
     list_filter = ('statut', 'date_proposition')
     search_fields = ('transporteur__raison_social', 'expedition__reference')
@@ -13,7 +12,6 @@ class OfferAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_proposition'
     list_per_page = 20
 
-    # Bloc 2 : Affichage avancé & protection des champs auto
     readonly_fields = ('date_proposition', 'created_at', 'updated_at')
     autocomplete_fields = ('transporteur', 'expedition', 'vehicule')
 
@@ -30,14 +28,13 @@ class OfferAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Bloc 2 : Colonne calculée avec badge HTML coloré
     @admin.display(description="Badge Statut")
     def statut_badge(self, obj):
         colors = {
-            'proposee': '#3498db',   # Bleu
-            'acceptee': '#2ecc71',   # Vert
-            'refusee': '#e74c3c',    # Rouge
-            'retiree': '#95a5a6',    # Gris
+            'proposee': '#3498db',
+            'acceptee': '#2ecc71',
+            'refusee': '#e74c3c',
+            'retiree': '#95a5a6',
         }
         color = colors.get(obj.statut, '#7f8c8d')
         return format_html(

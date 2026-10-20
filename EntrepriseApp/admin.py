@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Utilisateur, Entreprise
 from VehiculesApp.models import Vehicule
 
-# Bloc 3 : Inline éditable des véhicules d'une entreprise
 class VehiculeInline(admin.TabularInline):
     model = Vehicule
     extra = 1
@@ -12,7 +11,6 @@ class VehiculeInline(admin.TabularInline):
 
 @admin.register(Utilisateur)
 class UtilisateurAdmin(UserAdmin):
-    # Bloc 1 : Personnalisation de base
     list_display = ('user_id', 'username', 'email', 'role', 'telephone')
     list_filter = ('role', 'created_at')
     search_fields = ('user_id', 'username', 'email', 'telephone')
@@ -21,7 +19,6 @@ class UtilisateurAdmin(UserAdmin):
     date_hierarchy = 'created_at'
     list_per_page = 10
 
-    # Bloc 2 : Affichage avancé & protection des champs auto
     readonly_fields = ('user_id', 'created_at', 'updated_at')
     fieldsets = UserAdmin.fieldsets + (
         ('Informations Métier TransConnect', {
@@ -32,16 +29,14 @@ class UtilisateurAdmin(UserAdmin):
 
 @admin.register(Entreprise)
 class EntrepriseAdmin(admin.ModelAdmin):
-    # Bloc 1 : Personnalisation de base
     list_display = ('raison_social', 'matricule_fiscal', 'type_entreprise', 'gerant', 'created_at')
     list_filter = ('type_entreprise', 'created_at')
-    search_fields = ('raison_social', 'matricule_fiscal')  # Requis pour autocomplete_fields
+    search_fields = ('raison_social', 'matricule_fiscal')
     list_editable = ('type_entreprise',)
     ordering = ('raison_social',)
     date_hierarchy = 'created_at'
     list_per_page = 10
 
-    # Bloc 2 : Affichage avancé & autocomplete
     readonly_fields = ('created_at', 'updated_at')
     autocomplete_fields = ('gerant',)
     fieldsets = (
@@ -57,5 +52,4 @@ class EntrepriseAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Bloc 3 : Relations imbriquées
     inlines = [VehiculeInline]
