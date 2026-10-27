@@ -1,0 +1,69 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div style="padding: 20px;">
+    <h2>Tableau de bord de contrôle d'intégrité</h2>
+    <p>Ce tableau de bord audite les données pour détecter d'éventuelles incohérences métier suite à des opérations en masse directes (ex: <code>.update()</code> ou <code>.bulk_create()</code>) contournant les méthodes <code>clean()</code> et <code>save()</code>.</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 15px;">
+            <h3 style="margin-top: 0; color: #ba2121;">1. Offres orphelines ({{ offres_orphelines.count }})</h3>
+            <p style="font-size: 13px; color: #666;">Offres au statut <em>proposee</em> ou <em>acceptee</em> dont l'expédition associée n'est plus au statut <em>publiee</em> ou <em>attribuee</em>.</p>
+            <ul>
+                {% for o in offres_orphelines %}
+                <li>Offre #{{ o.id }} ({{ o.statut }}) - Expédition {{ o.expedition.reference }} ({{ o.expedition.statut }})</li>
+                {% empty %}
+                <li style="color: green;">Aucune anomalie détectée</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 15px;">
+            <h3 style="margin-top: 0; color: #ba2121;">2. Expéditions bloquées ({{ expeditions_bloquees.count }})</h3>
+            <p style="font-size: 13px; color: #666;">Expéditions au statut <em>publiee</em> depuis plus de 7 jours.</p>
+            <ul>
+                {% for e in expeditions_bloquees %}
+                <li>{{ e.reference }} - Créée le {{ e.created_at|date:"d/m/Y H:i" }}</li>
+                {% empty %}
+                <li style="color: green;">Aucune anomalie détectée</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 15px;">
+            <h3 style="margin-top: 0; color: #ba2121;">3. Transporteurs sans flotte ({{ transporteurs_sans_flotte.count }})</h3>
+            <p style="font-size: 13px; color: #666;">Entreprises déclarées comme transporteur ne possédant aucun véhicule.</p>
+            <ul>
+                {% for t in transporteurs_sans_flotte %}
+                <li>{{ t.raison_social }} ({{ t.matricule_fiscal }})</li>
+                {% empty %}
+                <li style="color: green;">Aucune anomalie détectée</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 15px;">
+            <h3 style="margin-top: 0; color: #ba2121;">4. Incohérence de disponibilité ({{ vehicules_incoherents.count }})</h3>
+            <p style="font-size: 13px; color: #666;">Véhicules marqués disponible=True mais assignés à une offre au statut <em>acceptee</em>.</p>
+            <ul>
+                {% for v in vehicules_incoherents %}
+                <li>Véhicule {{ v.immatriculation }} - {{ v.entreprise.raison_social }}</li>
+                {% empty %}
+                <li style="color: green;">Aucune anomalie détectée</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 15px; grid-column: span 2;">
+            <h3 style="margin-top: 0; color: #ba2121;">5. Doublons de proposition ({{ doublons_propositions|length }})</h3>
+            <p style="font-size: 13px; color: #666;">Entreprises ayant plus d'une offre au statut <em>proposee</em> active simultanément sur la même expédition.</p>
+            <ul>
+                {% for d in doublons_propositions %}
+                <li>Expédition {{ d.expedition__reference }} - Transporteur {{ d.transporteur__raison_social }} : {{ d.total }} offres actives</li>
+                {% empty %}
+                <li style="color: green;">Aucune anomalie détectée</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

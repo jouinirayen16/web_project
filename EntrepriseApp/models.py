@@ -63,3 +63,5 @@ class Entreprise(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     gerant = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, related_name='entreprise')
 
+    def __str__(self):
+        return f"{self.raison_social} ({self.type_entreprise})"

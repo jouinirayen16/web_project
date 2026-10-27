@@ -30,7 +30,8 @@ class Expedition(models.Model):
     entreprise = models.ForeignKey(
         'EntrepriseApp.Entreprise',
         on_delete=models.CASCADE,
-        related_name='expeditions'
+        related_name='expeditions',
+        limit_choices_to={'type_entreprise': 'chargeur'}
     )
 
     def clean(self):

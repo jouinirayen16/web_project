@@ -40,7 +40,7 @@ class EntrepriseAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     autocomplete_fields = ('gerant',)
     fieldsets = (
-        ('Informations Générales', {
+        ('Informations Générale', {
             'fields': ('raison_social', 'matricule_fiscal', 'type_entreprise', 'gerant')
         }),
         ('Coordonnées', {
